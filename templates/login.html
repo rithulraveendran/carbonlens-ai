@@ -1,0 +1,480 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarbonLens AI | Auth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #7f00ff;
+      --bg: #000000;
+      --panel: #0b0b0f;
+      --border: #27272a;
+      --text: #e5e7eb;
+      --muted: #a1a1aa;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+      font-family: "Manrope", sans-serif;
+    }
+
+    .auth-wrapper {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+      width: 920px;
+      max-width: 100%;
+      min-height: 640px;
+    }
+
+    .auth-form-box {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+      background: var(--panel);
+    }
+
+    .login-form-box {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+    }
+
+    .auth-wrapper.panel-active .login-form-box {
+      transform: translateX(100%);
+    }
+
+    .register-form-box {
+      left: 0;
+      width: 50%;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .auth-wrapper.panel-active .register-form-box {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 5;
+      animation: show 0.6s;
+    }
+
+    @keyframes show {
+      0%, 49.99% { opacity: 0; z-index: 1; }
+      50%, 100% { opacity: 1; z-index: 5; }
+    }
+
+    .slide-panel-wrapper {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: transform 0.6s ease-in-out;
+      z-index: 10;
+    }
+
+    .auth-wrapper.panel-active .slide-panel-wrapper {
+      transform: translateX(-100%);
+    }
+
+    .slide-panel {
+      background: linear-gradient(135deg, #5b13b9 0%, #7f00ff 45%, #9a4bff 100%);
+      color: #fff;
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .auth-wrapper.panel-active .slide-panel {
+      transform: translateX(50%);
+    }
+
+    .panel-content {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 44px;
+      text-align: center;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transform: translateX(0);
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .panel-content-left { transform: translateX(-20%); }
+    .auth-wrapper.panel-active .panel-content-left { transform: translateX(0); }
+    .panel-content-right { right: 0; transform: translateX(0); }
+    .auth-wrapper.panel-active .panel-content-right { transform: translateX(20%); }
+
+    .panel-content h1 {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .panel-content p {
+      font-size: 14px;
+      line-height: 22px;
+      opacity: 0.95;
+      margin-bottom: 22px;
+    }
+
+    .transparent-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 12px 30px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 36px 34px;
+      height: 100%;
+      text-align: center;
+      gap: 10px;
+      background: var(--panel);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .brand .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 28px;
+      font-variation-settings: "FILL" 1;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .muted {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      width: 100%;
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0a0a0a;
+      color: #f3f4f6;
+      padding: 12px 42px 12px 14px;
+      font-size: 14px;
+    }
+
+    .input-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(127, 0, 255, 0.16);
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 0;
+      color: #a3a3a3;
+      cursor: pointer;
+      padding: 0;
+      line-height: 0;
+    }
+
+    .toggle-pass .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .full-btn {
+      width: 100%;
+      border-radius: 999px;
+      border: 0;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 20px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .helper-link {
+      color: #c084fc;
+      font-size: 12px;
+      text-decoration: none;
+      margin: 2px 0 2px;
+    }
+
+    .flash-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .flash {
+      width: 100%;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 12px;
+      text-align: left;
+      border: 1px solid;
+    }
+
+    .flash.error {
+      background: rgba(127, 29, 29, 0.16);
+      border-color: rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+    }
+
+    .flash.success {
+      background: rgba(76, 29, 149, 0.18);
+      border-color: rgba(192, 132, 252, 0.35);
+      color: #e9d5ff;
+    }
+
+    .mobile-switch {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .mobile-switch button {
+      margin-top: 7px;
+      border: 1px solid rgba(127, 0, 255, 0.55);
+      background: transparent;
+      color: #d8b4fe;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .auth-wrapper {
+        min-height: 690px;
+      }
+      form {
+        padding: 28px 22px;
+      }
+      .slide-panel-wrapper {
+        display: none;
+      }
+      .auth-form-box {
+        position: static !important;
+        width: 100% !important;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+      .register-form-box {
+        display: none;
+      }
+      .auth-wrapper.panel-active .login-form-box {
+        display: none;
+      }
+      .auth-wrapper.panel-active .register-form-box {
+        display: block;
+      }
+      .mobile-switch {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-wrapper {% if initial_view == 'signup' %}panel-active{% endif %}" id="authWrapper">
+    <div class="auth-form-box register-form-box">
+      <form action="{{ url_for('signup') }}" method="post">
+        <div class="brand"><span class="material-symbols-outlined">eco</span>CarbonLens AI</div>
+        <h2>Create Account</h2>
+        <p class="muted">Enterprise onboarding for sustainability users</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages and initial_view == 'signup' %}
+          <div class="flash-wrap">
+            {% for category, message in messages %}
+            <div class="flash {{ 'error' if category == 'error' else 'success' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="input-wrap"><input name="name" type="text" placeholder="Full Name" required /></div>
+        <div class="input-wrap"><input name="email" type="email" placeholder="Work Email" required /></div>
+        <div class="input-wrap"><input name="company_name" type="text" placeholder="Company" required /></div>
+        <div class="input-wrap"><input name="secret_access_code" type="password" placeholder="Secret Access Code" required /></div>
+        <p class="muted" style="margin-top: -2px; margin-bottom: 2px;">For supplier signup, a Supplier ID is auto-generated after verification.</p>
+
+        <div class="input-wrap">
+          <input id="signup-password" name="password" type="password" placeholder="Password" required />
+          <button class="toggle-pass" data-password-toggle data-target="signup-password" type="button">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <div class="input-wrap">
+          <input id="signup-confirm-password" name="confirm_password" type="password" placeholder="Confirm Password" required />
+          <button class="toggle-pass" data-password-toggle data-target="signup-confirm-password" type="button">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+
+        <button class="full-btn" type="submit">Sign Up</button>
+        <div class="mobile-switch">
+          <p>Already have an account?</p>
+          <button id="mobileLoginBtn" type="button">Sign In</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="auth-form-box login-form-box">
+      <form action="{{ url_for('login') }}" method="post">
+        <div class="brand"><span class="material-symbols-outlined">eco</span>CarbonLens AI</div>
+        <h2>Sign In</h2>
+        <p class="muted">Access your emissions intelligence workspace</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages and initial_view != 'signup' %}
+          <div class="flash-wrap">
+            {% for category, message in messages %}
+            <div class="flash {{ 'error' if category == 'error' else 'success' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="input-wrap"><input name="email" type="email" placeholder="Email Address" required /></div>
+        <div class="input-wrap">
+          <input id="login-password" name="password" type="password" placeholder="Password" required />
+          <button class="toggle-pass" data-password-toggle data-target="login-password" type="button">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <a class="helper-link" href="{{ url_for('reset_password') }}">Forgot your password?</a>
+        <button class="full-btn" name="action" type="submit" value="password_login">Sign In</button>
+
+        <div class="mobile-switch">
+          <p>Don't have an account?</p>
+          <button id="mobileRegisterBtn" type="button">Sign Up</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="slide-panel-wrapper">
+      <div class="slide-panel">
+        <div class="panel-content panel-content-left">
+          <h1>Welcome Back</h1>
+          <p>Sign in and continue managing your sustainability workflows.</p>
+          <button class="transparent-btn" id="loginBtn" type="button">Sign In</button>
+        </div>
+        <div class="panel-content panel-content-right">
+          <h1>Join CarbonLens</h1>
+          <p>Create your account and start your reporting setup.</p>
+          <button class="transparent-btn" id="registerBtn" type="button">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    try {
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key.startsWith("carbonlens_chat_session_history")) {
+          sessionStorage.removeItem(key);
+        }
+      });
+    } catch (err) {
+    }
+
+    const registerBtn = document.getElementById("registerBtn");
+    const loginBtn = document.getElementById("loginBtn");
+    const mobileRegisterBtn = document.getElementById("mobileRegisterBtn");
+    const mobileLoginBtn = document.getElementById("mobileLoginBtn");
+    const authWrapper = document.getElementById("authWrapper");
+
+    if (registerBtn) {
+      registerBtn.addEventListener("click", () => authWrapper.classList.add("panel-active"));
+    }
+    if (loginBtn) {
+      loginBtn.addEventListener("click", () => authWrapper.classList.remove("panel-active"));
+    }
+    if (mobileRegisterBtn) {
+      mobileRegisterBtn.addEventListener("click", () => authWrapper.classList.add("panel-active"));
+    }
+    if (mobileLoginBtn) {
+      mobileLoginBtn.addEventListener("click", () => authWrapper.classList.remove("panel-active"));
+    }
+
+    document.querySelectorAll("[data-password-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        const input = targetId ? document.getElementById(targetId) : null;
+        const icon = btn.querySelector(".material-symbols-outlined");
+        if (!input) return;
+        const show = input.type === "password";
+        input.type = show ? "text" : "password";
+        if (icon) icon.textContent = show ? "visibility" : "visibility_off";
+      });
+    });
+  </script>
+</body>
+</html>
+

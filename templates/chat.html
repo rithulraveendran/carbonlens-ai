@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CarbonLens AI | AI Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#7F00FF",
+          "background-light": "#0B0B0F",
+          "sidebar-bg": "#000000",
+          "border-ribbon": "#E2E8F0"
+        },
+        fontFamily: {
+          "display": ["Manrope", "sans-serif"]
+        }
+      },
+    },
+  }
+</script>
+<style type="text/tailwindcss">
+  body { font-family: 'Manrope', sans-serif; }
+  .sidebar-item-active { background-color: rgba(255, 255, 255, 0.1); }
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  #appSidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-in-out;
+  }
+  #sidebarBackdrop {
+    display: none;
+  }
+  body.sidebar-mobile-open #appSidebar {
+    transform: translateX(0);
+  }
+  body.sidebar-mobile-open #sidebarBackdrop {
+    display: block;
+  }
+  @media (min-width: 1024px) {
+    #appSidebar {
+      transform: translateX(0);
+    }
+    #appFrame {
+      padding-left: 280px;
+      transition: padding-left 0.2s ease-in-out;
+    }
+    body.sidebar-collapsed #appSidebar {
+      transform: translateX(-100%);
+    }
+    body.sidebar-collapsed #appFrame {
+      padding-left: 0;
+    }
+  }
+</style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }
+  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+<style>
+  
+  :root {
+    --cl-purple: #7F00FF;
+    --cl-purple-soft: #f5f3ff;
+    --cl-purple-mid: #c084fc;
+    --cl-black: #000000;
+  }
+  #chatMessages {
+    background: #000000 !important;
+  }
+  #chatInput::placeholder {
+    color: #c4b5fd !important;
+  }
+  #chatInput {
+    color: #ffffff !important;
+  }
+  #chatMessages, #chatMessages * {
+    color: #ffffff !important;
+  }
+  .chat-shell-black {
+    background: #000000 !important;
+  }
+  .chat-input-glass {
+    background: rgba(127, 0, 255, 0.08) !important;
+    border: 1px solid rgba(192, 132, 252, 0.25) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .bubble-glass-user {
+    background: linear-gradient(135deg, rgba(127, 0, 255, 0.34), rgba(127, 0, 255, 0.14)) !important;
+    border: 1px solid rgba(192, 132, 252, 0.35) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 8px 24px rgba(127, 0, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .bubble-glass-bot {
+    background: linear-gradient(135deg, rgba(28, 28, 35, 0.72), rgba(127, 0, 255, 0.08)) !important;
+    border: 1px solid rgba(192, 132, 252, 0.3) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+</style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased h-screen overflow-hidden">
+<div class="h-full flex overflow-hidden">
+  <div id="sidebarBackdrop" class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"></div>
+  <aside id="appSidebar" class="w-[280px] bg-sidebar-bg flex-shrink-0 flex flex-col text-white fixed inset-y-0 left-0 z-50">
+    <div class="h-[72px] px-6 flex items-center gap-3">
+      <div class="size-10 bg-white rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary text-2xl font-bold">eco</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight">CarbonLens AI</h1>
+    </div>
+    <nav class="mt-4 flex-1 px-4 space-y-1">
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('home') }}{% endif %}">
+        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+        <span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}My Portal{% else %}Dashboard{% endif %}</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('upload') }}">
+        <span class="material-symbols-outlined text-[22px]">cloud_upload</span>
+        <span class="text-sm font-semibold">Upload Documents</span>
+      </a>
+      {% if not (user and user.access_role == 'supplier') %}
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('suppliers_hub') }}{% endif %}">
+        <span class="material-symbols-outlined text-[22px]">inventory</span>
+        <span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}Submission Status{% else %}Suppliers{% endif %}</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('reports') }}{% endif %}">
+        <span class="material-symbols-outlined text-[22px]">description</span>
+        <span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}My Performance{% else %}Reports{% endif %}</span>
+      </a>
+      {% endif %}
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg sidebar-item-active transition-colors" href="{{ url_for('carbonlens_chat') }}">
+        <span class="material-symbols-outlined text-[22px]">chat</span>
+        <span class="text-sm font-semibold">AI Chat</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('settings') }}">
+        <span class="material-symbols-outlined text-[22px]">settings</span>
+        <span class="text-sm font-semibold">Settings</span>
+      </a>
+    </nav>
+    <div class="p-4 border-t border-white/10">
+      <a href="{{ url_for('logout') }}" class="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white/90">
+        <span class="material-symbols-outlined text-[22px]">logout</span>
+        <span class="text-sm font-semibold">Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <div id="appFrame" class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <header class="h-[72px] bg-white border-b border-border-ribbon flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <button id="sidebarToggle" type="button" class="inline-flex items-center justify-center size-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
+          <span class="material-symbols-outlined text-[22px]">menu</span>
+        </button>
+        <div class="min-w-0">
+          <h2 class="text-sm font-bold text-slate-900 truncate">AI Chat Insights</h2>
+          <p class="text-xs text-slate-500 truncate">Ask about suppliers, Scope 3 emissions, risk, coverage, and documents.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <p class="text-sm font-bold text-slate-900 leading-none">{{ user.name if user and user.name else 'User' }}</p>
+          {% if user and user.access_role == 'supplier' and user.supplier_id %}
+          <p class="text-xs text-slate-500 font-medium mt-1">Supplier ID: {{ user.supplier_id }}</p>
+          {% else %}
+          <p class="text-xs text-slate-500 font-medium mt-1">{{ user.role if user and user.role else 'Sustainability Lead' }}</p>
+          {% endif %}
+        </div>
+        <div class="size-10 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200">
+          <img alt="User Profile" class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 min-h-0">
+      <div class="h-full flex flex-col min-h-0 w-full bg-white border-t border-slate-100 chat-shell-black">
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6 bg-slate-50/30"></div>
+        <div class="p-4 bg-white border-t border-slate-100 chat-shell-black">
+          <div class="max-w-3xl mx-auto w-full">
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-2 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 transition-all w-full chat-input-glass">
+              <input id="chatInput" type="text" class="flex-1 w-full bg-transparent border-none focus:ring-0 text-sm py-2 text-slate-700 placeholder:text-slate-400" placeholder="Ask CarbonLens AI about your emissions..." />
+              <button id="sendBtn" class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-all flex items-center justify-center shadow-md shadow-primary/20">
+                <span class="material-symbols-outlined text-xl">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const body = document.body;
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    const SIDEBAR_STATE_KEY = "carbonlens_sidebar_collapsed_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+    const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+    const getSavedCollapsed = () => {
+      try {
+        return localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+      } catch (err) {
+        return false;
+      }
+    };
+    const setSavedCollapsed = (value) => {
+      try {
+        localStorage.setItem(SIDEBAR_STATE_KEY, value ? "1" : "0");
+      } catch (err) {
+      }
+    };
+    const applyDesktopState = () => {
+      body.classList.toggle("sidebar-collapsed", getSavedCollapsed());
+    };
+
+    applyDesktopState();
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        if (isDesktop()) {
+          const nextState = !body.classList.contains("sidebar-collapsed");
+          body.classList.toggle("sidebar-collapsed", nextState);
+          setSavedCollapsed(nextState);
+        } else {
+          body.classList.toggle("sidebar-mobile-open");
+        }
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", () => body.classList.remove("sidebar-mobile-open"));
+    }
+
+    window.addEventListener("resize", () => {
+      if (isDesktop()) {
+        body.classList.remove("sidebar-mobile-open");
+        applyDesktopState();
+      }
+    });
+  })();
+
+  const CHAT_API_URL = "{{ url_for('carbonlens_chat') }}";
+  const CHAT_STORAGE_KEY = "carbonlens_chat_session_history_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+  let chatHistory = [];
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatMessageText(value) {
+    return escapeHtml(value).replace(/\n/g, "<br>");
+  }
+
+  function saveHistory() {
+    sessionStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
+  }
+
+  function loadHistory() {
+    const raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((item) => item && (item.role === "user" || item.role === "assistant") && item.content);
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function scrollToBottom() {
+    const chatEl = document.getElementById("chatMessages");
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+
+  function renderMessage(role, content) {
+    const chatEl = document.getElementById("chatMessages");
+    const wrapper = document.createElement("div");
+    const safeText = formatMessageText(content);
+
+    if (role === "user") {
+      wrapper.className = "flex flex-col items-end";
+      wrapper.innerHTML = `
+        <div class="max-w-[82%] text-white px-5 py-3 rounded-[22px] shadow-sm bubble-glass-user">
+          <p class="text-base leading-relaxed">${safeText}</p>
+        </div>`;
+    } else {
+      wrapper.className = "flex flex-col items-start";
+      wrapper.innerHTML = `
+        <div class="max-w-[82%] border border-slate-200 text-white px-5 py-3 rounded-[22px] shadow-sm bubble-glass-bot">
+          <p class="text-base leading-relaxed">${safeText}</p>
+        </div>`;
+    }
+
+    chatEl.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function pushAndRender(role, content) {
+    chatHistory.push({ role, content });
+    saveHistory();
+    renderMessage(role, content);
+  }
+
+  function renderAllMessages() {
+    const chatEl = document.getElementById("chatMessages");
+    chatEl.innerHTML = "";
+    for (const item of chatHistory) renderMessage(item.role, item.content);
+    scrollToBottom();
+  }
+
+  function setInitialMessage() {
+    if (chatHistory.length > 0) return;
+    chatHistory = [
+      { role: "assistant", content: "Welcome to CarbonLens AI. Ask me about supplier emissions, risk levels, coverage metrics, and uploaded document insights." }
+    ];
+    saveHistory();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const historyBeforeMessage = [...chatHistory];
+    pushAndRender("user", message);
+    input.value = "";
+
+    try {
+      const response = await fetch(CHAT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, chat_history: historyBeforeMessage }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        pushAndRender("assistant", (data && data.error) ? data.error : "Unable to process request.");
+        return;
+      }
+      pushAndRender("assistant", data.reply || "I don't have enough data to answer that.");
+    } catch (err) {
+      pushAndRender("assistant", "Network error. Please try again.");
+    } finally {
+      input.focus();
+    }
+  }
+
+  document.getElementById("sendBtn").addEventListener("click", sendMessage);
+  document.getElementById("chatInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  window.addEventListener("load", () => {
+    chatHistory = loadHistory();
+    setInitialMessage();
+    renderAllMessages();
+    document.getElementById("chatInput").focus();
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

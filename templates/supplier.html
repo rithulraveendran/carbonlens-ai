@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Supplier Detail | CarbonLens AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                "primary": "#7F00FF",
+                "background-light": "#0B0B0F",
+                "sidebar-bg": "#000000",
+                "border-ribbon": "#E2E8F0",
+            },
+            fontFamily: {
+                "display": ["Manrope", "sans-serif"]
+            },
+        },
+    },
+}
+</script>
+<style type="text/tailwindcss">
+body {
+    font-family: "Manrope", sans-serif;
+}
+.sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white rounded-lg transition-colors;
+}
+.sidebar-item-active {
+    @apply bg-white/10 text-white;
+}
+#appSidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-in-out;
+}
+#sidebarBackdrop {
+    display: none;
+}
+body.sidebar-mobile-open #appSidebar {
+    transform: translateX(0);
+}
+body.sidebar-mobile-open #sidebarBackdrop {
+    display: block;
+}
+@media (min-width: 1024px) {
+    #appSidebar {
+        transform: translateX(0);
+    }
+    #appFrame {
+        padding-left: 280px;
+        transition: padding-left 0.2s ease-in-out;
+    }
+    body.sidebar-collapsed #appSidebar {
+        transform: translateX(-100%);
+    }
+    body.sidebar-collapsed #appFrame {
+        padding-left: 0;
+    }
+}
+</style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased">
+<div class="min-h-screen flex">
+<div id="sidebarBackdrop" class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"></div>
+<aside id="appSidebar" class="w-[280px] bg-sidebar-bg flex-shrink-0 flex flex-col text-white fixed inset-y-0 left-0 z-50">
+<div class="h-[72px] px-6 flex items-center gap-3">
+<div class="size-10 bg-white rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl font-bold">eco</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">CarbonLens AI</h1>
+</div>
+<nav class="mt-4 flex-1 px-4 space-y-1">
+<a class="sidebar-item" href="{{ url_for('home') }}">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="sidebar-item" href="{{ url_for('upload') }}">
+<span class="material-symbols-outlined text-[22px]">cloud_upload</span>
+<span class="text-sm font-semibold">Upload Documents</span>
+</a>
+<a class="sidebar-item sidebar-item-active" href="{{ url_for('suppliers_hub') }}">
+<span class="material-symbols-outlined text-[22px]">inventory</span>
+<span class="text-sm font-semibold">Suppliers</span>
+</a>
+<a class="sidebar-item" href="{{ url_for('reports') }}">
+<span class="material-symbols-outlined text-[22px]">description</span>
+<span class="text-sm font-semibold">Reports</span>
+</a>
+<a class="sidebar-item" href="{{ url_for('carbonlens_chat') }}">
+<span class="material-symbols-outlined text-[22px]">chat</span>
+<span class="text-sm font-semibold">AI Chat</span>
+</a>
+<a class="sidebar-item" href="{{ url_for('settings') }}">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/10">
+<a href="{{ url_for('logout') }}" class="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white/90">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+<span class="text-sm font-semibold">Sign Out</span>
+</a>
+</div>
+</aside>
+
+<div id="appFrame" class="flex-1 flex flex-col min-w-0">
+<header class="h-[72px] bg-white border-b border-border-ribbon flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0 sticky top-0">
+<div class="flex items-center gap-3 min-w-0">
+<button id="sidebarToggle" type="button" class="inline-flex items-center justify-center size-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+<div class="min-w-0">
+<h2 class="text-sm font-bold text-slate-900 truncate">Supplier Detail</h2>
+<p class="text-xs text-slate-500 truncate">{{ supplier.name }}</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-sm font-bold text-slate-900 leading-none">{{ user.name if user and user.name else 'User' }}</p>
+<p class="text-xs text-slate-500 font-medium mt-1">{{ user.role if user and user.role else 'Sustainability Lead' }}</p>
+</div>
+<div class="size-10 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200">
+<img alt="User Profile" class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+</div>
+</div>
+</header>
+
+<div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
+{% with messages = get_flashed_messages(with_categories=true, category_filter=['error']) %}
+{% if messages %}
+<div class="space-y-2">
+{% for category, message in messages %}
+<div class="px-4 py-3 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-violet-50 text-violet-700 border border-violet-100{% endif %}">
+{{ message }}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
+<div>
+<h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ supplier.name }}</h2>
+<div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+<span class="bg-white px-2.5 py-1 rounded border border-slate-200 font-mono">ID: {{ supplier.id }}</span>
+{% if supplier.get("supplier_code") %}
+<span class="bg-white px-2.5 py-1 rounded border border-slate-200 font-mono">Code: {{ supplier.supplier_code }}</span>
+{% endif %}
+<span class="bg-white px-2.5 py-1 rounded border border-slate-200">{{ supplier.category }}</span>
+<span class="bg-white px-2.5 py-1 rounded border border-slate-200">{{ supplier.region }}</span>
+</div>
+</div>
+<div class="w-full lg:w-[360px]">
+<label class="block mb-2 text-sm font-semibold text-slate-700">Select Supplier</label>
+<select id="supplier-selector" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+{% for item in suppliers %}
+<option value="{{ url_for('supplier_detail', supplier_id=item.id) }}" {% if item.id == supplier.id %}selected{% endif %}>
+{{ item.name }}{% if item.get("supplier_code") %} - {{ item.supplier_code }}{% endif %}
+</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-xs font-semibold tracking-wide uppercase text-slate-500">Risk Status</p>
+<p class="mt-2 text-2xl font-black {% if supplier.risk_score >= 80 %}text-red-600{% elif supplier.risk_score >= 60 %}text-amber-600{% else %}text-emerald-600{% endif %}">
+{{ risk_level }}
+</p>
+<p class="mt-2 text-sm text-slate-500">Score: {{ "%.2f"|format(supplier.risk_score) }} | {{ supplier.risk_band }}</p>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-xs font-semibold tracking-wide uppercase text-slate-500">Total Emissions</p>
+<p class="mt-2 text-2xl font-black text-slate-900">{{ "%.2f"|format(supplier.emissions_tco2e) }} <span class="text-base text-slate-500">tCO2e</span></p>
+<p class="mt-2 text-sm text-slate-500">Coverage: {{ "%.2f"|format(supplier.coverage_pct) }}%</p>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-xs font-semibold tracking-wide uppercase text-slate-500">Documents</p>
+<p class="mt-2 text-2xl font-black text-slate-900">{{ supplier.documents|length }}</p>
+<p class="mt-2 text-sm text-slate-500">Uploaded evidence files</p>
+</div>
+</div>
+
+<div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+<p class="font-semibold text-amber-800">Normalization Alert</p>
+<p class="text-sm mt-1 text-amber-700">{{ supplier.normalization_alert }}</p>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="xl:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="text-xl font-bold text-slate-900">Emission Breakdown</h3>
+<p class="text-sm text-slate-500 mt-1">Distribution by category from uploaded records</p>
+{% set breakdown_total = supplier.breakdown | sum(attribute='value') %}
+<div class="mt-6 space-y-5">
+{% for row in supplier.breakdown %}
+<div>
+<div class="flex items-center justify-between text-sm">
+<p class="font-semibold text-slate-800">{{ row.label }}</p>
+<p class="font-semibold text-primary">{{ "%.4f"|format(row.value) }} tCO2e</p>
+</div>
+<div class="mt-2 h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: {{ ((row.value / breakdown_total) * 100) if breakdown_total > 0 else 0 }}%"></div>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+
+<div class="bg-primary/5 p-6 rounded-xl border border-primary/20 shadow-sm flex flex-col">
+<div class="flex items-center gap-2 text-primary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">auto_awesome</span>
+<h4 class="font-extrabold uppercase tracking-widest text-[11px]">AI Insight Panel</h4>
+</div>
+<p class="text-sm leading-relaxed text-slate-700">{{ supplier.ai_insight if supplier.ai_insight else "AI insight unavailable for this supplier." }}</p>
+<div class="mt-4 p-3 rounded-lg border border-primary/10 bg-white/70">
+<p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold">Assessment</p>
+<p class="text-sm mt-1 text-slate-700">{{ supplier.risk_assessment }}</p>
+</div>
+<div class="mt-4 text-sm text-slate-600">
+<p><span class="font-semibold">Risk Band:</span> {{ supplier.risk_band }}</p>
+<p><span class="font-semibold">Coverage:</span> {{ "%.2f"|format(supplier.coverage_pct) }}%</p>
+</div>
+<div class="mt-5 p-3 rounded-lg border border-primary/10 bg-white/70">
+<p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold mb-2">Emission Reduction Suggestions</p>
+<form action="{{ url_for('update_supplier_suggestions', supplier_id=supplier.id) }}" method="post" class="space-y-3">
+<textarea name="reduction_suggestions" rows="5" class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="One suggestion per line">{{ (supplier.reduction_suggestions or []) | join('\n') }}</textarea>
+<button type="submit" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90">Save Suggestions</button>
+</form>
+{% if supplier.reduction_suggestions %}
+<ul class="mt-3 space-y-1 text-sm text-slate-600 list-disc pl-5">
+{% for item in supplier.reduction_suggestions %}
+<li>{{ item }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+</div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+<h3 class="text-lg font-bold text-slate-900">Document Proof Table</h3>
+<a href="{{ url_for('upload') }}" class="text-sm font-semibold text-primary">Upload More Evidence</a>
+</div>
+<div class="overflow-x-auto">
+<table class="min-w-full text-sm">
+<thead class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider">
+<tr>
+<th class="px-6 py-3 text-left">Document</th>
+<th class="px-6 py-3 text-left">Type</th>
+<th class="px-6 py-3 text-left">Uploaded</th>
+<th class="px-6 py-3 text-left">Status</th>
+<th class="px-6 py-3 text-left">Proof Detail</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+{% if supplier.documents %}
+{% for doc in supplier.documents %}
+<tr>
+<td class="px-6 py-4 font-semibold text-slate-800">{{ doc.name }}</td>
+<td class="px-6 py-4 text-slate-700">{{ doc.type }}</td>
+<td class="px-6 py-4 text-slate-700">{{ doc.uploaded_at }}</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full text-xs font-semibold {% if doc.status == 'Verified' %}bg-emerald-100 text-violet-700{% else %}bg-amber-100 text-amber-700{% endif %}">
+{{ doc.status }}
+</span>
+</td>
+<td class="px-6 py-4 text-slate-600">{{ doc.proof }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+<td class="px-6 py-6 text-slate-500" colspan="5">No documents available for this supplier yet.</td>
+</tr>
+{% endif %}
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="flex items-center justify-end gap-3">
+<a href="{{ url_for('upload') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 font-semibold hover:bg-slate-50">Upload More</a>
+<form action="{{ url_for('delete_supplier', supplier_id=supplier.id) }}" method="post" onsubmit="return confirm('Delete this supplier and all related documents? This cannot be undone.');">
+<button type="submit" class="px-5 py-2.5 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700">Delete Supplier</button>
+</form>
+</div>
+</div>
+</div>
+
+<script>
+const body = document.body;
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+const SIDEBAR_STATE_KEY = "carbonlens_sidebar_collapsed_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+const desktopMatch = () => window.matchMedia("(min-width: 1024px)").matches;
+const getSavedCollapsed = () => {
+    try {
+        return localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+    } catch (err) {
+        return false;
+    }
+};
+const setSavedCollapsed = (value) => {
+    try {
+        localStorage.setItem(SIDEBAR_STATE_KEY, value ? "1" : "0");
+    } catch (err) {
+    }
+};
+const applyDesktopState = () => {
+    body.classList.toggle("sidebar-collapsed", getSavedCollapsed());
+};
+
+applyDesktopState();
+
+if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", function () {
+        if (desktopMatch()) {
+            const nextState = !body.classList.contains("sidebar-collapsed");
+            body.classList.toggle("sidebar-collapsed", nextState);
+            setSavedCollapsed(nextState);
+        } else {
+            body.classList.toggle("sidebar-mobile-open");
+        }
+    });
+}
+
+if (sidebarBackdrop) {
+    sidebarBackdrop.addEventListener("click", function () {
+        body.classList.remove("sidebar-mobile-open");
+    });
+}
+
+window.addEventListener("resize", function () {
+    if (desktopMatch()) {
+        body.classList.remove("sidebar-mobile-open");
+        applyDesktopState();
+    }
+});
+
+const supplierSelector = document.getElementById("supplier-selector");
+if (supplierSelector) {
+    supplierSelector.addEventListener("change", function () {
+        if (this.value) {
+            window.location.href = this.value;
+        }
+    });
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

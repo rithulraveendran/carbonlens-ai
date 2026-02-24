@@ -1,0 +1,8 @@
+activity_type,unit,emission_factor_kg_co2e,region,source
+diesel_litre,litre,2.68,global_avg,Based on DEFRA/GHG factors
+petrol_litre,litre,2.31,global_avg,Based on DEFRA/GHG factors
+electricity_kwh,kWh,0.80,india_avg,India Grid avg emissions :contentReference[oaicite:0]{index=0}
+steel_ton,ton,1850,global_avg,Industry process average :contentReference[oaicite:1]{index=1}
+freight_ton_km,ton_km,0.12,global_avg,Standard transport EF :contentReference[oaicite:2]{index=2}
+rail_freight_ton_km,ton_km,0.0204,eu_avg,Rail freight diesel average :contentReference[oaicite:3]{index=3}
+raw_materials_kg,kg,1.90,global_avg,Aggregate material EF :contentReference[oaicite:4]{index=4}

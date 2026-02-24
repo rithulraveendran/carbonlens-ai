@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CarbonLens AI | Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: "#7F00FF",
+        "background-light": "#0B0B0F",
+        "sidebar-bg": "#000000",
+        "border-ribbon": "#E2E8F0"
+      },
+      fontFamily: { display: ["Manrope", "sans-serif"] }
+    }
+  }
+}
+</script>
+<style type="text/tailwindcss">
+body { font-family: "Manrope", sans-serif; }
+.sidebar-item-active { background-color: rgba(255, 255, 255, 0.1); }
+#appSidebar {
+  transform: translateX(-100%);
+  transition: transform 0.2s ease-in-out;
+}
+#sidebarBackdrop {
+  display: none;
+}
+body.sidebar-mobile-open #appSidebar {
+  transform: translateX(0);
+}
+body.sidebar-mobile-open #sidebarBackdrop {
+  display: block;
+}
+@media (min-width: 1024px) {
+  #appSidebar {
+    transform: translateX(0);
+  }
+  #appFrame {
+    padding-left: 280px;
+    transition: padding-left 0.2s ease-in-out;
+  }
+  body.sidebar-collapsed #appSidebar {
+    transform: translateX(-100%);
+  }
+  body.sidebar-collapsed #appFrame {
+    padding-left: 0;
+  }
+}
+</style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased">
+<div class="min-h-screen flex">
+  <div id="sidebarBackdrop" class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"></div>
+  <aside id="appSidebar" class="w-[280px] bg-sidebar-bg flex-shrink-0 flex flex-col text-white fixed inset-y-0 left-0 z-50">
+    <div class="h-[72px] px-6 flex items-center gap-3">
+      <div class="size-10 bg-white rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary text-2xl font-bold">eco</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight">CarbonLens AI</h1>
+    </div>
+    <nav class="mt-4 flex-1 px-4 space-y-1">
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('home') }}">
+        <span class="material-symbols-outlined text-[22px]">dashboard</span><span class="text-sm font-semibold">Dashboard</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('upload') }}">
+        <span class="material-symbols-outlined text-[22px]">cloud_upload</span><span class="text-sm font-semibold">Upload Documents</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('suppliers_hub') }}">
+        <span class="material-symbols-outlined text-[22px]">inventory</span><span class="text-sm font-semibold">Suppliers</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg sidebar-item-active transition-colors" href="{{ url_for('reports') }}">
+        <span class="material-symbols-outlined text-[22px]">description</span><span class="text-sm font-semibold">Reports</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('carbonlens_chat') }}">
+        <span class="material-symbols-outlined text-[22px]">chat</span><span class="text-sm font-semibold">AI Chat</span>
+      </a>
+      <a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('settings') }}">
+        <span class="material-symbols-outlined text-[22px]">settings</span><span class="text-sm font-semibold">Settings</span>
+      </a>
+    </nav>
+    <div class="p-4 border-t border-white/10">
+      <a href="{{ url_for('logout') }}" class="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white/90">
+        <span class="material-symbols-outlined text-[22px]">logout</span><span class="text-sm font-semibold">Sign Out</span>
+      </a>
+    </div>
+  </aside>
+
+  <div id="appFrame" class="flex-1 flex flex-col min-w-0">
+    <header class="h-[72px] bg-white border-b border-border-ribbon flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0 sticky top-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <button id="sidebarToggle" type="button" class="inline-flex items-center justify-center size-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
+          <span class="material-symbols-outlined text-[22px]">menu</span>
+        </button>
+        <div class="min-w-0">
+          <h2 class="text-sm font-bold text-slate-900 truncate">Sustainability Reports</h2>
+          <p class="text-xs text-slate-500 truncate">{{ suppliers|length }} supplier report(s) available</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <p class="text-sm font-bold text-slate-900 leading-none">{{ user.name if user and user.name else 'User' }}</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">{{ user.role if user and user.role else 'Sustainability Lead' }}</p>
+        </div>
+        <div class="size-10 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200">
+          <img alt="User Profile" class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <div class="max-w-6xl mx-auto bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+          <h2 class="text-2xl font-bold">Supplier ESG Reports</h2>
+          <p class="text-slate-500 mt-2">Generate report downloads with live risk and contribution context.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Supplier Name</th>
+                <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Scope 3 Contribution</th>
+                <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Status</th>
+                <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400">Risk Level</th>
+                <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-slate-400 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              {% if suppliers %}
+                {% for supplier in suppliers %}
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="size-8 bg-slate-100 rounded flex items-center justify-center font-bold text-slate-400 text-xs">{{ (supplier.name or 'S')[0] | upper }}</div>
+                      <div>
+                        <p class="text-sm font-bold">{{ supplier.name }}</p>
+                        <p class="text-xs text-slate-500">{{ supplier.category }} | {{ supplier.region }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="bg-primary h-full" style="width: {{ supplier.coverage_pct if supplier.coverage_pct <= 100 else 100 }}%"></div>
+                      </div>
+                      <span class="text-sm font-semibold">{{ "{:,.2f}".format(supplier.emissions_tco2e) }} tCO2e</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    {% if supplier.risk_score >= 80 %}
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full w-fit"><span class="size-1.5 bg-red-600 rounded-full"></span>Critical</span>
+                    {% elif supplier.risk_score >= 60 %}
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full w-fit"><span class="size-1.5 bg-amber-600 rounded-full"></span>Needs Attention</span>
+                    {% else %}
+                      <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-violet-50 px-2.5 py-1 rounded-full w-fit"><span class="size-1.5 bg-emerald-600 rounded-full"></span>On Track</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="text-xs font-bold {% if supplier.risk_score >= 80 %}text-red-600{% elif supplier.risk_score >= 60 %}text-amber-600{% else %}text-slate-600{% endif %}">
+                      {% if supplier.risk_score >= 80 %}Very High{% elif supplier.risk_score >= 60 %}High{% elif supplier.risk_score >= 40 %}Moderate{% else %}Low{% endif %}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <a href="{{ url_for('download_report', supplier_id=supplier.id) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90">
+                      <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                      Download PDF
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td class="px-6 py-8 text-slate-500" colspan="5">No suppliers found.</td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+  (function () {
+    const body = document.body;
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    const SIDEBAR_STATE_KEY = "carbonlens_sidebar_collapsed_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+    const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+    const getSavedCollapsed = () => {
+      try {
+        return localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+      } catch (err) {
+        return false;
+      }
+    };
+    const setSavedCollapsed = (value) => {
+      try {
+        localStorage.setItem(SIDEBAR_STATE_KEY, value ? "1" : "0");
+      } catch (err) {
+      }
+    };
+    const applyDesktopState = () => {
+      body.classList.toggle("sidebar-collapsed", getSavedCollapsed());
+    };
+
+    applyDesktopState();
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        if (isDesktop()) {
+          const nextState = !body.classList.contains("sidebar-collapsed");
+          body.classList.toggle("sidebar-collapsed", nextState);
+          setSavedCollapsed(nextState);
+        } else {
+          body.classList.toggle("sidebar-mobile-open");
+        }
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", () => body.classList.remove("sidebar-mobile-open"));
+    }
+
+    window.addEventListener("resize", () => {
+      if (isDesktop()) {
+        body.classList.remove("sidebar-mobile-open");
+        applyDesktopState();
+      }
+    });
+  })();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+

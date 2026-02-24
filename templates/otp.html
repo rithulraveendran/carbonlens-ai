@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OTP Verification - CarbonLens AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7F00FF",
+                        "background-light": "#0B0B0F",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-6">
+<div class="w-full max-w-md">
+<div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 p-8 md:p-12">
+<div class="flex flex-col items-center text-center mb-8">
+<div class="mb-4 flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-2xl">eco</span>
+</div>
+<span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">CarbonLens AI</span>
+</div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Verify your identity</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+Enter the 6-digit code sent to
+<span class="font-semibold text-slate-700 dark:text-slate-200">{{ destination }}</span>
+</p>
+{% if otp_expired %}
+<p class="text-red-600 text-xs mt-2">OTP expired. Resend and try again.</p>
+{% endif %}
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="space-y-2 mb-5">
+      {% for category, message in messages %}
+      <div class="px-4 py-3 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-violet-50 text-violet-700 border border-violet-100{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('otp') }}" class="space-y-6" id="otp-form" method="post">
+<input id="otp_code" name="otp_code" type="hidden"/>
+<div class="flex justify-between gap-2 md:gap-3">
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+<input class="otp-cell w-full aspect-square text-center text-xl font-bold border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-4 focus:ring-primary/10 bg-slate-50/50 dark:bg-slate-800/50 transition-all outline-none" maxlength="1" required type="number"/>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group" type="submit">
+<span>Verify &amp; Continue</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+
+<div class="mt-8 text-center">
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Didn't receive a code?</p>
+<form action="{{ url_for('resend_otp') }}" method="post">
+<button class="text-primary font-semibold hover:underline" type="submit">Resend OTP</button>
+</form>
+</div>
+</div>
+</div>
+
+<script>
+const cells = Array.from(document.querySelectorAll('.otp-cell'));
+const hiddenCode = document.getElementById('otp_code');
+
+cells.forEach((cell, idx) => {
+  cell.addEventListener('input', () => {
+    cell.value = (cell.value || '').slice(0, 1);
+    if (cell.value && idx < cells.length - 1) {
+      cells[idx + 1].focus();
+    }
+  });
+  cell.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !cell.value && idx > 0) {
+      cells[idx - 1].focus();
+    }
+  });
+});
+
+document.getElementById('otp-form').addEventListener('submit', (e) => {
+  const code = cells.map((cell) => cell.value).join('');
+  hiddenCode.value = code;
+  if (code.length !== 6) {
+    e.preventDefault();
+  }
+});
+</script>
+</body></html>
+
+
+
+
+
+
+

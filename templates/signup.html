@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Onboarding | CarbonLens AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7F00FF",
+                        "background-light": "#0B0B0F",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .form-input:focus {
+            border-color: #7F00FF !important;
+            --tw-ring-color: #7F00FF !important;
+        }
+    </style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-6 sm:p-12 font-display">
+<div class="w-full max-w-[520px] bg-white dark:bg-slate-900 rounded-xl shadow-xl overflow-hidden border border-slate-200/60 dark:border-slate-800">
+<div class="p-8 pb-4 text-center">
+<div class="inline-flex items-center justify-center w-14 h-14 bg-primary/10 rounded-xl mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">eco</span>
+</div>
+<h1 class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Create CarbonLens AI Account</h1>
+<p class="mt-2 text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-[360px] mx-auto">
+                Join the leading platform for Scope 3 emissions management and enterprise sustainability.
+            </p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="px-8 pt-2 space-y-2">
+      {% for category, message in messages %}
+      <div class="px-4 py-3 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-violet-50 text-violet-700 border border-violet-100{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('signup') }}" class="p-8 pt-4 space-y-5" method="post">
+<div class="grid grid-cols-1 gap-5">
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Full Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">person</span>
+<input class="form-input w-full pl-10 pr-4 py-3 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" name="name" placeholder="Jane Doe" required type="text"/>
+</div>
+</div>
+
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Work Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">mail</span>
+<input class="form-input w-full pl-10 pr-4 py-3 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" name="email" placeholder="jane@enterprise.com" required type="email"/>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Company</label>
+<input class="form-input w-full px-4 py-3 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" name="company_name" placeholder="Global Corp" required type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Secret Access Code</label>
+<input class="form-input w-full px-4 py-3 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" name="secret_access_code" placeholder="Enter your access code" required type="password"/>
+<p class="text-[11px] text-slate-500 ml-1">Provided by your CarbonLens administrator.</p>
+</div>
+</div>
+
+<p class="text-[11px] text-slate-500 ml-1">For supplier onboarding, a Supplier ID is auto-generated after verification.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Password</label>
+<div class="relative">
+<input class="form-input w-full px-4 py-3 pr-12 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" id="signup-password" name="password" placeholder="********" required type="password"/>
+<button type="button" data-password-toggle data-target="signup-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">Confirm</label>
+<div class="relative">
+<input class="form-input w-full px-4 py-3 pr-12 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary outline-none transition-all" id="signup-confirm-password" name="confirm_password" placeholder="********" required type="password"/>
+<button type="button" data-password-toggle data-target="signup-confirm-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<button class="w-full bg-primary hover:bg-[#6B00D6] text-white font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+<span>Create Account</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</form>
+
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-center">
+<p class="text-sm text-slate-600 dark:text-slate-400">
+                Already have an account?
+                <a class="text-primary font-bold hover:underline ml-1" href="{{ url_for('login') }}">Sign In</a>
+</p>
+</div>
+</div>
+
+<script>
+document.querySelectorAll("[data-password-toggle]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetId = btn.getAttribute("data-target");
+    const input = targetId ? document.getElementById(targetId) : null;
+    const icon = btn.querySelector(".material-symbols-outlined");
+    if (!input) return;
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    if (icon) icon.textContent = show ? "visibility" : "visibility_off";
+  });
+});
+</script>
+</body></html>
+
+
+
+
+
+
+

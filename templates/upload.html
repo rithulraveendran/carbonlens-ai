@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Upload &amp; Manual Entry | CarbonLens AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7F00FF",
+                        "background-light": "#0B0B0F",
+                        "background-dark": "#000000",
+                        "sidebar-bg": "#000000",
+                        "border-ribbon": "#E2E8F0"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .sidebar-item-active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        #appSidebar {
+            transform: translateX(-100%);
+            transition: transform 0.2s ease-in-out;
+        }
+        #sidebarBackdrop {
+            display: none;
+        }
+        body.sidebar-mobile-open #appSidebar {
+            transform: translateX(0);
+        }
+        body.sidebar-mobile-open #sidebarBackdrop {
+            display: block;
+        }
+        @media (min-width: 1024px) {
+            #appSidebar {
+                transform: translateX(0);
+            }
+            #appFrame {
+                padding-left: 280px;
+                transition: padding-left 0.2s ease-in-out;
+            }
+            body.sidebar-collapsed #appSidebar {
+                transform: translateX(-100%);
+            }
+            body.sidebar-collapsed #appFrame {
+                padding-left: 0;
+            }
+        }
+    </style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased">
+<div class="min-h-screen flex">
+<div id="sidebarBackdrop" class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"></div>
+<aside id="appSidebar" class="w-[280px] bg-sidebar-bg flex-shrink-0 flex flex-col text-white fixed inset-y-0 left-0 z-50">
+<div class="h-[72px] px-6 flex items-center gap-3">
+<div class="size-10 bg-white rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl font-bold">eco</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">CarbonLens AI</h1>
+</div>
+<nav class="mt-4 flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('home') }}{% endif %}">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}My Portal{% else %}Dashboard{% endif %}</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg sidebar-item-active transition-colors" href="{{ url_for('upload') }}">
+<span class="material-symbols-outlined text-[22px]">cloud_upload</span>
+<span class="text-sm font-semibold">Upload Documents</span>
+</a>
+{% if not (user and user.access_role == 'supplier') %}
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('suppliers_hub') }}{% endif %}">
+<span class="material-symbols-outlined text-[22px]">inventory</span>
+<span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}Submission Status{% else %}Suppliers{% endif %}</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('reports') }}{% endif %}">
+<span class="material-symbols-outlined text-[22px]">description</span>
+<span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}My Performance{% else %}Reports{% endif %}</span>
+</a>
+{% endif %}
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('carbonlens_chat') }}">
+<span class="material-symbols-outlined text-[22px]">chat</span>
+<span class="text-sm font-semibold">AI Chat</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors" href="{{ url_for('settings') }}">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/10">
+<a href="{{ url_for('logout') }}" class="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white/90">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+<span class="text-sm font-semibold">Sign Out</span>
+</a>
+</div>
+</aside>
+
+<div id="appFrame" class="flex-1 flex flex-col min-w-0">
+<header class="h-[72px] bg-white border-b border-border-ribbon flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0 sticky top-0">
+<div class="flex items-center gap-3 min-w-0">
+<button id="sidebarToggle" type="button" class="inline-flex items-center justify-center size-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+<div class="min-w-0">
+<h2 class="text-sm font-bold text-slate-900 truncate">Upload Documents</h2>
+<p class="text-xs text-slate-500 truncate">{% if is_supplier_user %}Document-only supplier submission{% else %}Upload &amp; manual entry{% endif %}</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-sm font-bold text-slate-900 leading-none">{{ user.name if user and user.name else 'User' }}</p>
+{% if user and user.access_role == 'supplier' and user.supplier_id %}
+<p class="text-xs text-slate-500 font-medium mt-1">Supplier ID: {{ user.supplier_id }}</p>
+{% else %}
+<p class="text-xs text-slate-500 font-medium mt-1">{{ user.role if user and user.role else 'Sustainability Lead' }}</p>
+{% endif %}
+</div>
+<div class="size-10 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200">
+<img alt="User Profile" class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+</div>
+</div>
+</header>
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto w-full space-y-8 pb-16">
+{% with messages = get_flashed_messages(with_categories=true, category_filter=['error']) %}
+{% if messages %}
+<div class="space-y-2">
+{% for category, message in messages %}
+<div class="px-4 py-3 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-violet-50 text-violet-700 border border-violet-100{% endif %}">{{ message }}</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<form action="{{ url_for('upload') }}" enctype="multipart/form-data" method="post" class="space-y-8">
+<div class="space-y-2">
+<h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Upload Emissions Documents</h2>
+<p class="text-slate-600 dark:text-slate-400 max-w-2xl">
+                    Automate reporting from invoices, receipts, and utility bills. Staff can submit Scope 1, 2, and 3 documents. Supplier users are restricted to Scope 3 only.
+                </p>
+</div>
+<div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+{% if not is_supplier_user %}
+<label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Emission Scope</label>
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">layers</span>
+<select id="scope-type-select" name="scope_type" class="w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none">
+<option value="scope1">Scope 1 (Direct Emissions)</option>
+<option value="scope2">Scope 2 (Purchased Energy)</option>
+<option value="scope3" selected>Scope 3 (Value Chain)</option>
+</select>
+</div>
+{% else %}
+<input type="hidden" name="scope_type" value="scope3"/>
+{% endif %}
+<div id="supplier-select-block">
+{% if is_supplier_user %}
+<label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Select Company</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">apartment</span>
+<select id="supplier-id-select" name="supplier_id" required class="w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none">
+{% for option in supplier_company_options %}
+<option value="{{ option.supplier_id }}">
+  {{ option.company_name }} - {{ option.supplier_name }}{% if option.supplier_code %} ({{ option.supplier_code }}){% endif %}
+</option>
+{% endfor %}
+</select>
+</div>
+<p class="text-xs text-slate-500 mt-2">Choose which company this upload should be submitted to.</p>
+{% else %}
+<label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Select Supplier</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">factory</span>
+<select id="supplier-id-select" name="supplier_id" required class="w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none">
+<option value="">Select supplier</option>
+{% for supplier in suppliers %}
+<option value="{{ supplier.id }}">{{ supplier.name }}{% if supplier.supplier_code %} - {{ supplier.supplier_code }}{% endif %} ({{ supplier.id }})</option>
+{% endfor %}
+</select>
+</div>
+{% endif %}
+</div>
+</div>
+<div class="p-8">
+<div class="border-2 border-dashed border-primary/30 dark:border-primary/20 rounded-xl bg-primary/5 dark:bg-primary/5 p-12 flex flex-col items-center justify-center text-center transition-colors hover:border-primary group">
+<div class="size-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-[32px]">upload_file</span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Drag and Drop documents here</h3>
+<p id="selected-file-name" class="text-sm text-slate-500 dark:text-slate-400 mb-6">Supported formats: PDF, XLSX, XLSM, CSV (Max 20MB)</p>
+<input id="document-input" name="document" type="file" accept=".pdf,.xlsx,.xlsm,.csv,application/pdf,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12" class="hidden"/>
+<div class="flex gap-3">
+<button id="browse-files-btn" type="button" class="px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-colors">
+                                Browse Files
+                            </button>
+<button type="submit" name="submit_mode" value="pdf" class="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:bg-opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">auto_fix_high</span>
+                                Process Document
+                            </button>
+</div>
+</div>
+</div>
+</div>
+{% if not is_supplier_user %}
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Manual Data Entry</h3>
+</div>
+<div class="group border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+<button type="button" data-accordion-toggle="fuel-panel" data-expanded="true" class="w-full flex items-center justify-between p-5 text-left bg-slate-50 dark:bg-slate-800/30 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Fuel &amp; Energy</h4>
+<p class="text-xs text-slate-500">Diesel, Electricity, Natural Gas</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 accordion-icon">expand_less</span>
+</button>
+<div id="fuel-panel" class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Diesel (Liters)</label>
+<input name="diesel_litre" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 500" type="number" min="0" step="any"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Electricity (kWh)</label>
+<input name="electricity_kwh" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 1200" type="number" min="0" step="any"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Petrol (Liters)</label>
+<input name="petrol_litre" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 350" type="number" min="0" step="any"/>
+</div>
+</div>
+</div>
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+<button type="button" data-accordion-toggle="materials-panel" data-expanded="false" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">architecture</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Materials</h4>
+<p class="text-xs text-slate-500">Steel, Raw Materials</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 accordion-icon">expand_more</span>
+</button>
+<div id="materials-panel" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 dark:border-slate-800 hidden">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Steel (Ton)</label>
+<input name="steel_ton" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 3.5" type="number" min="0" step="any"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Raw Materials (kg)</label>
+<input name="raw_materials_kg" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 900" type="number" min="0" step="any"/>
+</div>
+</div>
+</div>
+<div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+<button type="button" data-accordion-toggle="logistics-panel" data-expanded="false" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Logistics</h4>
+<p class="text-xs text-slate-500">Road, Rail Freight</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 accordion-icon">expand_more</span>
+</button>
+<div id="logistics-panel" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 dark:border-slate-800 hidden">
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Road Freight (ton-km)</label>
+<input name="freight_ton_km" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 15000" type="number" min="0" step="any"/>
+</div>
+<div class="space-y-2">
+<label class="block text-xs font-bold text-slate-500 uppercase">Rail Freight (ton-km)</label>
+<input name="rail_freight_ton_km" class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-primary focus:border-primary" placeholder="e.g. 5000" type="number" min="0" step="any"/>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-4">
+<button type="reset" class="px-6 py-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-700 transition-colors">
+                    Clear All
+                </button>
+<button type="button" class="px-6 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-colors">
+                    Save Draft
+                </button>
+<button type="submit" name="submit_mode" value="manual" class="px-8 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:bg-opacity-90 transition-all">
+                    Submit Entry
+                </button>
+</div>
+</div>
+{% else %}
+<div class="rounded-xl border border-slate-200 p-4">
+  <p class="text-sm text-slate-500">Manual data entry is disabled for supplier users. Upload document evidence to keep a complete audit trail.</p>
+</div>
+{% endif %}
+ </form>
+</div>
+</div>
+
+<script>
+  (function () {
+    const body = document.body;
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    const SIDEBAR_STATE_KEY = "carbonlens_sidebar_collapsed_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+    const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+    const getSavedCollapsed = () => {
+      try {
+        return localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+      } catch (err) {
+        return false;
+      }
+    };
+    const setSavedCollapsed = (value) => {
+      try {
+        localStorage.setItem(SIDEBAR_STATE_KEY, value ? "1" : "0");
+      } catch (err) {
+      }
+    };
+    const applyDesktopState = () => {
+      body.classList.toggle("sidebar-collapsed", getSavedCollapsed());
+    };
+
+    applyDesktopState();
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        if (isDesktop()) {
+          const nextState = !body.classList.contains("sidebar-collapsed");
+          body.classList.toggle("sidebar-collapsed", nextState);
+          setSavedCollapsed(nextState);
+        } else {
+          body.classList.toggle("sidebar-mobile-open");
+        }
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", () => body.classList.remove("sidebar-mobile-open"));
+    }
+
+    window.addEventListener("resize", () => {
+      if (isDesktop()) {
+        body.classList.remove("sidebar-mobile-open");
+        applyDesktopState();
+      }
+    });
+  })();
+</script>
+
+<script>
+  const documentInput = document.getElementById('document-input');
+  const browseFilesBtn = document.getElementById('browse-files-btn');
+  const selectedFileName = document.getElementById('selected-file-name');
+  const scopeTypeSelect = document.getElementById('scope-type-select');
+  const supplierSelectBlock = document.getElementById('supplier-select-block');
+  const supplierIdSelect = document.getElementById('supplier-id-select');
+  const uploadTitle = document.querySelector('h2.text-3xl');
+
+  if (browseFilesBtn && documentInput) {
+    browseFilesBtn.addEventListener('click', () => documentInput.click());
+  }
+
+  if (documentInput && selectedFileName) {
+    documentInput.addEventListener('change', () => {
+      if (documentInput.files && documentInput.files.length > 0) {
+        selectedFileName.textContent = `Selected: ${documentInput.files[0].name}`;
+      } else {
+        selectedFileName.textContent = 'Supported formats: PDF, XLSX, XLSM, CSV (Max 20MB)';
+      }
+    });
+  }
+
+  const applyScopeUI = () => {
+    if (!scopeTypeSelect || !supplierSelectBlock) return;
+    const scope = scopeTypeSelect.value;
+    const isScope3 = scope === 'scope3';
+    supplierSelectBlock.classList.toggle('hidden', !isScope3);
+    if (supplierIdSelect) supplierIdSelect.required = isScope3;
+    if (uploadTitle) {
+      uploadTitle.textContent = isScope3
+        ? 'Upload Scope 3 Documents'
+        : (scope === 'scope1' ? 'Upload Scope 1 Documents' : 'Upload Scope 2 Documents');
+    }
+  };
+
+  if (scopeTypeSelect) {
+    scopeTypeSelect.addEventListener('change', applyScopeUI);
+    applyScopeUI();
+  }
+
+  document.querySelectorAll('[data-accordion-toggle]').forEach((toggleBtn) => {
+    toggleBtn.addEventListener('click', () => {
+      const panelId = toggleBtn.getAttribute('data-accordion-toggle');
+      const panel = panelId ? document.getElementById(panelId) : null;
+      const icon = toggleBtn.querySelector('.accordion-icon');
+      if (!panel) return;
+
+      const isExpanded = toggleBtn.getAttribute('data-expanded') === 'true';
+      if (isExpanded) {
+        panel.classList.add('hidden');
+        toggleBtn.setAttribute('data-expanded', 'false');
+        if (icon) icon.textContent = 'expand_more';
+      } else {
+        panel.classList.remove('hidden');
+        toggleBtn.setAttribute('data-expanded', 'true');
+        if (icon) icon.textContent = 'expand_less';
+      }
+    });
+  });
+</script>
+</body></html>
+
+
+
+
+
+
+

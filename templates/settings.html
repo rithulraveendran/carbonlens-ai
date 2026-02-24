@@ -1,0 +1,323 @@
+﻿<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account &amp; Profile Settings - CarbonLens AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7F00FF",
+                        "background-light": "#0B0B0F",
+                        "background-dark": "#000000",
+                        "sidebar-bg": "#000000",
+                        "border-gray": "#E2E8F0"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .sidebar-item {
+            @apply flex items-center gap-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white rounded-lg transition-colors;
+        }
+        .sidebar-item.active {
+            @apply bg-white/10 text-white font-semibold;
+        }
+        #appSidebar {
+            transform: translateX(-100%);
+            transition: transform 0.2s ease-in-out;
+        }
+        #sidebarBackdrop {
+            display: none;
+        }
+        body.sidebar-mobile-open #appSidebar {
+            transform: translateX(0);
+        }
+        body.sidebar-mobile-open #sidebarBackdrop {
+            display: block;
+        }
+        @media (min-width: 1024px) {
+            #appSidebar {
+                transform: translateX(0);
+            }
+            #appFrame {
+                padding-left: 280px;
+                transition: padding-left 0.2s ease-in-out;
+            }
+            body.sidebar-collapsed #appSidebar {
+                transform: translateX(-100%);
+            }
+            body.sidebar-collapsed #appFrame {
+                padding-left: 0;
+            }
+        }
+    </style>
+<style>
+  
+  body { background: #000000 !important; color: #e5e7eb !important; }
+  .bg-background-light, .bg-white, .bg-slate-50, .bg-slate-100, .bg-slate-200 { background-color: #000000 !important; }
+  .dark\:bg-slate-900, .dark\:bg-slate-800, .dark\:bg-background-dark { background-color: #000000 !important; }
+  .border, .border-slate-50, .border-slate-100, .border-slate-200, .border-slate-300, .border-border-ribbon, .border-gray, .ring-slate-50, .ring-slate-200 { border-color: #27272a !important; }
+  .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: #e5e7eb !important; }  .placeholder\:text-slate-400::placeholder, .placeholder\:text-slate-500::placeholder { color: #9ca3af !important; }
+  input, select, textarea { background-color: #0a0a0a !important; color: #f3f4f6 !important; border-color: #27272a !important; }
+  table thead, table tbody tr, table tbody td, table tbody th { background-color: #000000 !important; }
+</style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased">
+<div class="min-h-screen flex">
+<div id="sidebarBackdrop" class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"></div>
+<aside id="appSidebar" class="w-[280px] bg-sidebar-bg flex flex-col fixed inset-y-0 left-0 z-50">
+<div class="h-[72px] px-6 flex items-center gap-3">
+<div class="size-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-2xl font-bold">eco</span>
+</div>
+<span class="text-white text-xl font-bold tracking-tight">CarbonLens AI</span>
+</div>
+<nav class="mt-4 flex-1 px-4 space-y-1">
+<a class="sidebar-item" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('home') }}{% endif %}">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<span class="text-sm">{% if user and user.access_role == 'supplier' %}My Portal{% else %}Dashboard{% endif %}</span>
+</a>
+<a class="sidebar-item" href="{{ url_for('upload') }}">
+<span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+<span class="text-sm font-semibold">Upload Documents</span>
+</a>
+{% if not (user and user.access_role == 'supplier') %}
+<a class="sidebar-item" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('suppliers_hub') }}{% endif %}">
+<span class="material-symbols-outlined text-[24px]">inventory</span>
+<span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}Submission Status{% else %}Suppliers{% endif %}</span>
+</a>
+<a class="sidebar-item" href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('reports') }}{% endif %}">
+<span class="material-symbols-outlined text-[24px]">description</span>
+<span class="text-sm font-semibold">{% if user and user.access_role == 'supplier' %}My Performance{% else %}Reports{% endif %}</span>
+</a>
+{% endif %}
+<a class="sidebar-item" href="{{ url_for('carbonlens_chat') }}">
+<span class="material-symbols-outlined text-[24px]">chat</span>
+<span class="text-sm font-semibold">AI Chat</span>
+</a>
+<a class="sidebar-item active" href="{{ url_for('settings') }}">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-sm font-semibold">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-white/10">
+<a href="{{ url_for('logout') }}" class="flex items-center gap-3 px-4 py-3 text-white/80 hover:text-white w-full transition-colors rounded-lg hover:bg-white/10">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+<span class="text-sm font-semibold">Sign Out</span>
+</a>
+</div>
+</aside>
+<main id="appFrame" class="flex-1 flex flex-col min-w-0">
+<header class="h-[72px] bg-white border-b border-[#E2E8F0] sticky top-0 z-40 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<button id="sidebarToggle" type="button" class="inline-flex items-center justify-center size-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+<div class="min-w-0">
+<h2 class="text-sm font-bold text-slate-900 truncate">Account Settings</h2>
+<p class="text-xs text-slate-500 truncate">Profile and security</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right mr-2">
+<p class="text-sm font-bold text-slate-900 leading-tight">{{ user.name if user and user.name else 'User' }}</p>
+{% if user and user.access_role == 'supplier' and user.supplier_id %}
+<p class="text-xs text-slate-500 font-medium">Supplier ID: {{ user.supplier_id }}</p>
+{% else %}
+<p class="text-xs text-slate-500 font-medium">{{ user.role if user and user.role else 'Sustainability Manager' }}</p>
+{% endif %}
+</div>
+<div class="size-10 rounded-full bg-slate-200 border border-slate-100 overflow-hidden ring-2 ring-slate-50">
+<img alt="User Avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+</div>
+</div>
+</header>
+
+<div class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+<div class="mb-10">
+<h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Account Settings</h1>
+<p class="text-slate-500 mt-2 text-lg">Manage your personal profile information, security preferences, and organizational details.</p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true, category_filter=['error']) %}
+  {% if messages %}
+    <div class="space-y-2 mb-6">
+      {% for category, message in messages %}
+      <div class="px-4 py-3 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-violet-50 text-violet-700 border border-violet-100{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('settings') }}" method="post">
+<div class="bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden mb-8">
+<div class="p-8 border-b border-slate-50 bg-slate-50/30">
+<h3 class="text-lg font-bold text-slate-900">Profile Information</h3>
+<p class="text-sm text-slate-500">Your profile details are visible to other team members in your organization.</p>
+</div>
+<div class="p-8 space-y-8">
+<div class="flex items-center gap-8">
+<div class="relative group">
+<div class="size-24 rounded-2xl bg-slate-100 overflow-hidden ring-4 ring-slate-50">
+<img class="w-full h-full object-cover" src="{{ url_for('static', filename='user.jpg') }}"/>
+</div>
+</div>
+<div>
+<h4 class="text-base font-bold text-slate-900">Profile Photo</h4>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-slate-700">Full Name</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-[#7F00FF]/20 focus:border-[#7F00FF] transition-all outline-none" name="name" type="text" value="{{ user.name }}"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-slate-700">Email Address</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed outline-none" disabled="" type="email" value="{{ user.email }}"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-slate-700">Professional Role</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-[#7F00FF]/20 focus:border-[#7F00FF] transition-all outline-none" name="role" type="text" value="{{ user.role }}"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-slate-700">Company Name</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-[#7F00FF]/20 focus:border-[#7F00FF] transition-all outline-none" name="company_name" type="text" value="{{ user.company_name }}"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">verified</span>
+</div>
+</div>
+{% if user and user.access_role == 'supplier' %}
+<div class="space-y-2">
+<label class="text-sm font-bold text-slate-700">Supplier ID</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed outline-none font-mono" disabled="" type="text" value="{{ user.supplier_id or 'N/A' }}"/>
+</div>
+{% endif %}
+</div>
+</div>
+</div>
+
+<div class="bg-white border border-[#E2E8F0] rounded-2xl shadow-sm overflow-hidden mb-8">
+<div class="p-8 flex flex-wrap items-center justify-between gap-4">
+<div class="flex-1 min-w-[280px]">
+<h3 class="text-lg font-bold text-slate-900">Security &amp; Access</h3>
+<p class="text-sm text-slate-500 mt-1">Manage your password and account access.</p>
+</div>
+<a href="{{ url_for('reset_password') }}" class="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">lock_reset</span>
+Reset Password
+</a>
+</div>
+</div>
+
+<div class="mt-12 flex items-center justify-end gap-4 border-t border-slate-200 pt-8">
+<a href="{% if user and user.access_role == 'supplier' %}{{ url_for('supplier_portal') }}{% else %}{{ url_for('home') }}{% endif %}" class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-800 transition-colors">Cancel</a>
+<button class="px-10 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-[#7F00FF]/20 hover:bg-primary/90 hover:-translate-y-0.5 transition-all" type="submit">
+Save Changes
+</button>
+</div>
+</form>
+
+<div class="border border-red-200 bg-red-50/30 rounded-2xl overflow-hidden mt-8">
+<div class="p-8 flex flex-wrap items-center justify-between gap-6">
+<div class="flex-1 min-w-[280px]">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-red-500">warning</span>
+<h3 class="text-lg font-bold text-red-600">Danger Zone</h3>
+</div>
+<p class="text-sm text-red-500/80">Once you delete your account, there is no going back. All your data including suppliers, documents, and logs will be permanently removed.</p>
+</div>
+<form action="{{ url_for('delete_account') }}" method="post">
+<button class="px-6 py-2.5 border-2 border-red-500 text-red-500 text-sm font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-lg">delete_forever</span>
+Delete Account
+</button>
+</form>
+</div>
+</div>
+
+</div>
+</main>
+</div>
+
+<script>
+  (function () {
+    const body = document.body;
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    const SIDEBAR_STATE_KEY = "carbonlens_sidebar_collapsed_{{ (user.email if user and user.email else 'anon') | replace('@', '_') | replace('.', '_') }}";
+    const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+    const getSavedCollapsed = () => {
+      try {
+        return localStorage.getItem(SIDEBAR_STATE_KEY) === "1";
+      } catch (err) {
+        return false;
+      }
+    };
+    const setSavedCollapsed = (value) => {
+      try {
+        localStorage.setItem(SIDEBAR_STATE_KEY, value ? "1" : "0");
+      } catch (err) {
+      }
+    };
+    const applyDesktopState = () => {
+      body.classList.toggle("sidebar-collapsed", getSavedCollapsed());
+    };
+
+    applyDesktopState();
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        if (isDesktop()) {
+          const nextState = !body.classList.contains("sidebar-collapsed");
+          body.classList.toggle("sidebar-collapsed", nextState);
+          setSavedCollapsed(nextState);
+        } else {
+          body.classList.toggle("sidebar-mobile-open");
+        }
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", () => body.classList.remove("sidebar-mobile-open"));
+    }
+
+    window.addEventListener("resize", () => {
+      if (isDesktop()) {
+        body.classList.remove("sidebar-mobile-open");
+        applyDesktopState();
+      }
+    });
+  })();
+</script>
+
+</body></html>
+
+
+
+
+
+
+
+
