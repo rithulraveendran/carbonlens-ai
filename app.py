@@ -59,12 +59,6 @@ EMISSION_FACTORS_PATH = os.environ.get(
     "EMISSION_FACTORS_PATH",
     os.path.join(BASE_DIR, "static", "emission_factors.csv"),
 )
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
-SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "change-me@example.com").strip()
-APP_PASSWORD = os.environ.get("APP_PASSWORD", "").replace(" ", "")
-OTP_TTL_MINUTES = int(os.environ.get("OTP_TTL_MINUTES", "10"))
-HIGH_EMISSION_ALERT_TCO2E = float(os.environ.get("HIGH_EMISSION_ALERT_TCO2E", "350"))
-ALERT_EMAIL_COOLDOWN_MINUTES = int(os.environ.get("ALERT_EMAIL_COOLDOWN_MINUTES", "60"))
 
 if not os.path.exists(FIREBASE_KEY_PATH):
     raise RuntimeError(f"FIREBASE_KEY_PATH does not exist: {FIREBASE_KEY_PATH}")
