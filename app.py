@@ -47,6 +47,12 @@ try:
     from openpyxl import load_workbook
 except ImportError:
     load_workbook = None
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "change-me@example.com").strip()
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "").replace(" ", "")
+OTP_TTL_MINUTES = int(os.environ.get("OTP_TTL_MINUTES", "10"))
+HIGH_EMISSION_ALERT_TCO2E = float(os.environ.get("HIGH_EMISSION_ALERT_TCO2E", "350"))
+ALERT_EMAIL_COOLDOWN_MINUTES = int(os.environ.get("ALERT_EMAIL_COOLDOWN_MINUTES", "60"))
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
