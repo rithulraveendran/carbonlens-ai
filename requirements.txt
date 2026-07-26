@@ -1,0 +1,8 @@
+Flask
+firebase-admin
+PyPDF2
+reportlab
+Werkzeug
+groq
+openpyxl
+gunicorn
